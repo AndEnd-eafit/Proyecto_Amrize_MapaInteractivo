@@ -4,6 +4,7 @@ import cv2
 import pytesseract
 from PIL import Image
 from keras.models import load_model
+from detect_pieces import detectar_piezas
 
 # Carga del modelo
 model = load_model('keras_model.h5')
@@ -77,7 +78,19 @@ if cam_:
         
         # Mostrar la imagen original
         st.image(img, caption='Imagen original', use_column_width=True)
-        
+
+        # Botón para detectar piezas físicas en la imagen capturada
+    if st.button("Detectar piezas en imagen de cámara"):
+        img_cv = cv2.cvtColor(np.array(img), cv2.COLOR_RGB2BGR)
+        piezas = detectar_piezas(img_cv)
+
+        if piezas:
+            st.subheader("Piezas detectadas:")
+            for i, pieza in enumerate(piezas):
+                st.write(f"Pieza {i+1}: Color {pieza['color']}, Posición (x={pieza['position']['x']}, y={pieza['position']['y']})")
+        else:
+            st.write("No se detectaron piezas.")
+
         # Preparar la imagen para la predicción
         normalized_image_array = normalize_image(img)
         if normalized_image_array is not None:
@@ -111,6 +124,18 @@ if upload_ is not None:
     
     # Mostrar la imagen original
     st.image(uploaded_image, caption='Imagen cargada', use_column_width=True)
+
+    # Botón para detectar piezas físicas en la imagen cargada
+    if st.button("Detectar piezas en imagen cargada"):
+        img_cv = cv2.cvtColor(np.array(uploaded_image), cv2.COLOR_RGB2BGR)
+        piezas = detectar_piezas(img_cv)
+
+        if piezas:
+            st.subheader("Piezas detectadas:")
+            for i, pieza in enumerate(piezas):
+                st.write(f"Pieza {i+1}: Color {pieza['color']}, Posición (x={pieza['position']['x']}, y={pieza['position']['y']})")
+        else:
+            st.write("No se detectaron piezas.")
     
     # Preparar la imagen para la predicción
     normalized_image_array = normalize_image(uploaded_image)
