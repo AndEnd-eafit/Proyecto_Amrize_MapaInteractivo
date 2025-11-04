@@ -1,29 +1,22 @@
 keras
 
+tensorflow==2.12
 streamlit
 streamlit-webrtc
-
 
 numpy
 opencv-python-headless
 
-opencv-python-headless
-googletrans==3.1.0a0
-
-Jinja2 >=2.9
-contourpy >=1
 pytesseract
-
 Pillow
-tensorflow==2.12
 
-packaging >=16.8
-pandas >=1.2
-
-pillow >=7.1.0
-PyYAML >=3.10
-tornado >=5.1
-xyzservices >=2021.09.1
+googletrans==3.1.0a0
+Jinja2>=2.9
+contourpy>=1
+packaging>=16.8
+pandas>=1.2
+PyYAML>=3.10
+tornado>=5.1
+xyzservices>=2021.09.1
 bokeh==2.4.3
-#bokeh==3.4.0
-Streamlit-bokeh-events
+streamlit-bokeh-events
