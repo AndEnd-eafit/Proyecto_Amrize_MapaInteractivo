@@ -5,6 +5,7 @@ import pytesseract
 from PIL import Image
 from keras.models import load_model
 from detect_pieces import detectar_piezas
+from detect_stars import detectar_estrellas
 
 # Carga del modelo
 model = load_model('keras_model.h5')
@@ -78,6 +79,17 @@ if cam_:
         
         # Mostrar la imagen original
         st.image(img, caption='Imagen original', use_column_width=True)
+
+    if st.button("Detectar estrellas"):
+        img_cv = cv2.cvtColor(np.array(img), cv2.COLOR_RGB2BGR)
+        estrellas = detectar_estrellas(img_cv)
+
+        if estrellas:
+            st.subheader("Estrellas detectadas:")
+            for i, estrella in enumerate(estrellas):
+                st.write(f"Estrella {i+1}: Color {estrella['color']}, Posición (x={estrella['position']['x']}, y={estrella['position']['y']})")
+        else:
+            st.write("No se detectaron estrellas.")
 
         # Botón para detectar piezas físicas en la imagen capturada
     if st.button("Detectar piezas en imagen de cámara"):
