@@ -7,7 +7,6 @@ from keras.models import load_model
 from detect_pieces import detectar_piezas
 from detect_stars import detectar_estrellas
 from classify_pieces import detectar_y_clasificar
-from classify_pieces import visualizar_predicciones
 
 # Carga del modelo
 model = load_model('keras_model.h5')
