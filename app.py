@@ -6,6 +6,7 @@ from PIL import Image
 from keras.models import load_model
 from detect_pieces import detectar_piezas
 from detect_stars import detectar_estrellas
+from classify_pieces import detectar_y_clasificar
 
 # Carga del modelo
 model = load_model('keras_model.h5')
@@ -90,6 +91,17 @@ if cam_:
                 st.write(f"Estrella {i+1}: Color {estrella['color']}, Posición (x={estrella['position']['x']}, y={estrella['position']['y']})")
         else:
             st.write("No se detectaron estrellas.")
+
+    if st.button("Detectar y clasificar piezas"):
+        img_cv = cv2.cvtColor(np.array(img), cv2.COLOR_RGB2BGR)
+        piezas = detectar_y_clasificar(img_cv)
+
+        if piezas:
+            st.subheader("Piezas detectadas:")
+            for i, pieza in enumerate(piezas):
+                st.write(f"Pieza {i+1}: Clase {pieza['clase']} ({pieza['confianza']*100:.1f}%), Color {pieza['color']}, Posición (x={pieza['position']['x']}, y={pieza['position']['y']})")
+        else:
+            st.write("No se detectaron piezas.")
 
         # Botón para detectar piezas físicas en la imagen capturada
     if st.button("Detectar piezas en imagen de cámara"):
