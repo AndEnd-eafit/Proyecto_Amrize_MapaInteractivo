@@ -1,5 +1,0 @@
-0 Blue
-1 LightBlue
-2 Green
-3 Yellow
-4 Red
