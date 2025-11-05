@@ -115,23 +115,7 @@ if cam_:
                 st.write(f"Pieza {i+1}: Color {pieza['color']}, Posición (x={pieza['position']['x']}, y={pieza['position']['y']})")
         else:
             st.write("No se detectaron piezas.")
-
-
-
-        if st.button("Visualizar predicciones sobre la imagen"):
-            img_cv = cv2.cvtColor(np.array(img), cv2.COLOR_RGB2BGR)
-            imagen_anotada, piezas = visualizar_predicciones(img_cv)
-
-            # Mostrar imagen anotada
-            st.image(cv2.cvtColor(imagen_anotada, cv2.COLOR_BGR2RGB), caption="Predicciones sobre la imagen", use_column_width=True)
-
-            # Mostrar datos en texto
-            st.subheader("Piezas detectadas:")
-            for i, pieza in enumerate(piezas):
-                st.write(f"Pieza {i+1}: Clase {pieza['clase']} ({pieza['confianza']*100:.1f}%), Color {pieza['color']}, Posición (x={pieza['position']['x']}, y={pieza['position']['y']})")
-
-
-        
+       
         # Preparar la imagen para la predicción
         normalized_image_array = normalize_image(img)
         if normalized_image_array is not None:
@@ -157,6 +141,25 @@ if cam_:
             st.write("Texto extraído de la imagen con filtro:", text)
         else:
             st.write("No se pudo extraer texto de la imagen.")
+
+
+
+
+        if st.button("Visualizar predicciones sobre la imagen"):
+            img_cv = cv2.cvtColor(np.array(img), cv2.COLOR_RGB2BGR)
+            imagen_anotada, piezas = visualizar_predicciones(img_cv)
+
+            # Mostrar imagen anotada
+            st.image(cv2.cvtColor(imagen_anotada, cv2.COLOR_BGR2RGB), caption="Predicciones sobre la imagen", use_column_width=True)
+
+            # Mostrar datos en texto
+            st.subheader("Piezas detectadas:")
+            for i, pieza in enumerate(piezas):
+                st.write(f"Pieza {i+1}: Clase {pieza['clase']} ({pieza['confianza']*100:.1f}%), Color {pieza['color']}, Posición (x={pieza['position']['x']}, y={pieza['position']['y']})")
+
+
+
+
 
 # Procesar imagen desde un archivo subido
 if upload_ is not None:
