@@ -69,3 +69,21 @@ def detectar_y_clasificar(imagen_bgr):
         })
 
     return piezas
+    def visualizar_predicciones(imagen_bgr):
+    imagen_anotada = imagen_bgr.copy()
+    piezas = detectar_y_clasificar(imagen_bgr)
+
+    for pieza in piezas:
+        x = int(pieza['position']['x'] * imagen_bgr.shape[1])
+        y = int(pieza['position']['y'] * imagen_bgr.shape[0])
+        texto = f"{pieza['clase']} ({pieza['confianza']*100:.1f}%)"
+
+        # Dibujar círculo en la posición
+        cv2.circle(imagen_anotada, (x, y), 10, (0, 255, 0), -1)
+
+        # Escribir texto
+        cv2.putText(imagen_anotada, texto, (x + 10, y - 10),
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 255), 2)
+
+    return imagen_anotada, piezas
+
