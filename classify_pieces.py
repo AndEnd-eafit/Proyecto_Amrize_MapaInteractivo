@@ -69,7 +69,3 @@ def detectar_y_clasificar(imagen_bgr):
         })
 
     return piezas
-            }
-        })
-
-    return piezas
