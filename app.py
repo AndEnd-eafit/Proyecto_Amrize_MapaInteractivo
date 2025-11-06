@@ -1,3 +1,8 @@
+import streamlit as st
+import numpy as np
+import cv2
+import pytesseract
+from PIL import Image
 from keras.models import load_model
 from detect_pieces import detectar_piezas
 from detect_stars import detectar_estrellas
