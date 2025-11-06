@@ -1,6 +1,6 @@
 keras
 
-tensorflow==2.11
+tensorflow==2.12
 streamlit
 streamlit-webrtc
 
