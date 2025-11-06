@@ -6,6 +6,7 @@ from PIL import Image
 from keras.models import load_model
 from detect_pieces import detectar_piezas
 from detect_stars import detectar_estrellas
+from classify_pieces import detectar_y_clasificar  # ✅ archivo separado
 
 # Carga del modelo
 model = load_model('keras_model.h5')
@@ -13,33 +14,34 @@ data = np.ndarray(shape=(1, 224, 224, 3), dtype=np.float32)
 
 st.title("Reconocimiento de Gestos. Incluye función de OCR")
 
-# Barra lateral con solo el texto
+# Barra lateral
 with st.sidebar:
     st.subheader("Usa un modelo entrenado en Teachable Machine para identificar imágenes, e inclusive reconoce texto si lo hay")
     filtro = st.radio("Aplicar Filtro", ('Con Filtro', 'Sin Filtro'))
 
-# Opciones para cámara y carga de archivos en la parte principal
+# Opciones principales
 col1, col2 = st.columns(2)
-
 with col1:
     cam_ = st.checkbox("Usar Cámara")
-
 with col2:
     upload_ = st.file_uploader("Sube una imagen", type=["jpg", "jpeg", "png"])
 
-# Función para aplicar el filtro a la imagen
+# -------------------------------
+# Funciones auxiliares
+# -------------------------------
+
 def apply_filter(image, filtro):
     if filtro == 'Con Filtro':
         return cv2.bitwise_not(image)
     return image
 
-# Función para procesar la imagen para la predicción
+
 def process_image(img):
     img_cv = cv2.cvtColor(np.array(img), cv2.COLOR_RGB2BGR)
     img_cv = apply_filter(img_cv, filtro)
     return img_cv
 
-# Función para normalizar la imagen
+
 def normalize_image(img):
     newsize = (224, 224)
     img = img.resize(newsize)
@@ -52,7 +54,7 @@ def normalize_image(img):
     normalized_image_array = (img_array.astype(np.float32) / 127.0) - 1
     return normalized_image_array
 
-# Función para realizar la predicción
+
 def predict_image(image_array):
     if image_array.shape == (224, 224, 3) and image_array.dtype == np.float32:
         data[0] = image_array
@@ -62,13 +64,15 @@ def predict_image(image_array):
         st.error(f"Array tiene una forma o tipo incorrecto: {image_array.shape}, {image_array.dtype}")
         return None
 
-# Función para extraer texto de la imagen
+
 def extract_text_from_image(image):
     image_cv = cv2.cvtColor(np.array(image), cv2.COLOR_RGB2BGR)
     text = pytesseract.image_to_string(image_cv)
     return text.strip()
 
-# Procesar imagen desde la cámara
+# -------------------------------
+# Procesamiento con cámara
+# -------------------------------
 if cam_:
     img_file_buffer = st.camera_input("Toma una Foto")
     if img_file_buffer is not None:
@@ -101,63 +105,4 @@ if cam_:
             if piezas:
                 st.subheader("Piezas detectadas:")
                 for i, pieza in enumerate(piezas):
-                    st.write(f"Pieza {i+1}: Color {pieza['color']}, Posición (x={pieza['position']['x']}, y={pieza['position']['y']})")
-            else:
-                st.write("No se detectaron piezas.")
-
-        normalized_image_array = normalize_image(img)
-        if normalized_image_array is not None:
-            prediction_result = predict_image(normalized_image_array)
-            if prediction_result is not None:
-                prediction_displayed = False
-                if prediction_result[0][0] > 0.5:
-                    st.header('Palma, con Probabilidad: ' + str(prediction_result[0][0]))
-                    prediction_displayed = True
-                if prediction_result[0][1] > 0.5:
-                    st.header('Apuntar, con Probabilidad: ' + str(prediction_result[0][1]))
-                    prediction_displayed = True
-                if not prediction_displayed:
-                    st.write("Ninguna predicción supera el umbral de 0.5.")
-
-        img_filtered = process_image(img)
-        text = extract_text_from_image(Image.fromarray(cv2.cvtColor(img_filtered, cv2.COLOR_BGR2RGB)))
-        if text:
-            st.write("Texto extraído de la imagen con filtro:", text)
-        else:
-            st.write("No se pudo extraer texto de la imagen.")
-
-# Procesar imagen desde un archivo subido
-if upload_ is not None:
-    uploaded_image = Image.open(upload_).convert('RGB')
-    st.image(uploaded_image, caption='Imagen cargada', use_column_width=True)
-
-    if st.button("Detectar piezas en imagen cargada"):
-        img_cv = cv2.cvtColor(np.array(uploaded_image), cv2.COLOR_RGB2BGR)
-        piezas = detectar_piezas(img_cv)
-        if piezas:
-            st.subheader("Piezas detectadas:")
-            for i, pieza in enumerate(piezas):
-                st.write(f"Pieza {i+1}: Color {pieza['color']}, Posición (x={pieza['position']['x']}, y={pieza['position']['y']})")
-        else:
-            st.write("No se detectaron piezas.")
-
-    normalized_image_array = normalize_image(uploaded_image)
-    if normalized_image_array is not None:
-        prediction_result = predict_image(normalized_image_array)
-        if prediction_result is not None:
-            prediction_displayed = False
-            if prediction_result[0][0] > 0.5:
-                st.header('Palma, con Probabilidad: ' + str(prediction_result[0][0]))
-                prediction_displayed = True
-            if prediction_result[0][1] > 0.5:
-                st.header('Apuntar, con Probabilidad: ' + str(prediction_result[0][1]))
-                prediction_displayed = True
-            if not prediction_displayed:
-                st.write("Ninguna predicción supera el umbral de 0.5.")
-
-    img_filtered = process_image(uploaded_image)
-    text = extract_text_from_image(Image.fromarray(cv2.cvtColor(img_filtered, cv2.COLOR_BGR2RGB)))
-    if text:
-        st.write("Texto extraído de la imagen con filtro:", text)
-    else:
-        st.write("No se pudo extraer texto de la imagen.")
+                    st.write(f"Pieza {i+1}: Color {pieza['color']}, Posición
